@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEngine.SceneManagement; 
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -8,13 +8,20 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
-        if (Instance == null) Instance = this;
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     void Start()
     {
         UpdateState(GameState.Playing);
-        Debug.Log("state awal ");
     }
 
     void Update()
@@ -24,12 +31,10 @@ public class GameManager : MonoBehaviour
             if (currentState == GameState.Playing)
             {
                 UpdateState(GameState.Pause);
-                Debug.Log("state pause");
             }
             else if (currentState == GameState.Pause)
             {
                 UpdateState(GameState.Playing);
-                Debug.Log("state play");
             }
         }
     }
@@ -43,23 +48,28 @@ public class GameManager : MonoBehaviour
             case GameState.Playing:
                 Time.timeScale = 1f;
                 break;
+
             case GameState.Pause:
                 Time.timeScale = 0f;
                 break;
+
             case GameState.GameOver:
-                Time.timeScale = 0f;
+                Time.timeScale = 1f; 
                 Debug.Log("Game Over!");
+                SceneManager.LoadScene("MainMenu");
                 break;
         }
     }
 
     public void RestartGame()
     {
+        Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     public void GoToMainMenu()
     {
+        Time.timeScale = 1f;
         SceneManager.LoadScene("MainMenu");
     }
 }
